@@ -1,0 +1,182 @@
+# Cursor AI Rules for Vibe-Coding Foundational Template
+
+## Project Context
+This is a Next.js 13+ app with TypeScript, using:
+- Supabase for auth & database
+- Tailwind CSS + shadcn/ui for styling
+- AI APIs: OpenAI, Anthropic, Perplexity, FAL.AI
+- Caching system for AI responses
+
+## Tech Stack Documentation
+Read the official documentation for:
+- Next.js App Router: https://nextjs.org/docs/app
+- Supabase: https://supabase.com/docs
+- Tailwind CSS: https://tailwindcss.com/docs
+- shadcn/ui: https://ui.shadcn.com/docs
+- OpenAI API: https://platform.openai.com/docs
+- Anthropic API: https://docs.anthropic.com
+- Perplexity API: https://docs.perplexity.ai
+- FAL.AI: https://docs.fal.ai
+
+## Coding Standards
+- Use TypeScript with strict mode
+- Prefer functional components with hooks
+- Use Tailwind classes instead of custom CSS
+- Always handle loading and error states
+- Implement proper error boundaries
+- Use Zod for validation schemas
+- Cache AI responses when appropriate
+- Follow Next.js App Router patterns
+
+## File Structure
+- Components: PascalCase (UserProfile.tsx)
+- Pages: lowercase with hyphens (user-profile/page.tsx)
+- Hooks: camelCase starting with 'use' (useAuth.ts)
+- Utils: camelCase (formatDate.ts)
+- Types: PascalCase (AuthUser.ts)
+
+## File Creation
+- Keep all file creation and editing within the project folder only. Don't create files elsewhere on the system.
+
+## Component Creation Pattern
+When creating components:
+1. Import statements (React, then libraries, then local)
+2. Type definitions
+3. Component function with proper TypeScript props
+4. Export statement at bottom
+
+Example:
+```typescript
+'use client'
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/hooks/useAuth'
+
+interface ComponentProps {
+  title: string
+  onAction?: () => void
+}
+
+export default function MyComponent({ title, onAction }: ComponentProps) {
+  const [loading, setLoading] = useState(false)
+  const { user } = useAuth()
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold">{title}</h1>
+      <Button onClick={onAction} disabled={loading}>
+        {loading ? 'Loading...' : 'Click me'}
+      </Button>
+    </div>
+  )
+}
+```
+
+## API Route Pattern
+For API routes in app/api/:
+1. Input validation with Zod
+2. Authentication check if needed
+3. Try-catch for error handling
+4. Consistent response format
+
+Example:
+```javascript
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+
+const requestSchema = z.object({
+  message: z.string().min(1).max(1000)
+})
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { message } = requestSchema.parse(body)
+    
+    // Your logic here
+    
+    return NextResponse.json({ 
+      data: { response: 'Success' }, 
+      message: 'Operation completed' 
+    })
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Invalid request', message: error.message },
+      { status: 400 }
+    )
+  }
+}
+```
+
+## Database Operations
+- Always use Supabase client from lib/supabase.ts
+- Handle RLS (Row Level Security) policies
+- Use TypeScript types for database operations
+- Implement proper error handling
+
+## AI API Integration
+- Check cache first before making API calls
+- Implement rate limiting awareness
+- Handle API errors gracefully
+- Save successful responses to cache
+- Use environment variables for API keys
+- Support multiple AI providers: OpenAI, Anthropic, Perplexity, FAL.AI
+
+## Authentication Flow
+- Use Supabase Auth with proper TypeScript types
+- Implement protected routes with middleware
+- Handle auth state changes properly
+- Provide loading states during auth operations
+
+## Styling Guidelines
+- Use shadcn/ui components when available
+- Compose Tailwind classes logically
+- Prefer utility classes over custom CSS
+- Ensure responsive design (mobile-first)
+- Use consistent spacing: p-4, mb-6, etc.
+
+## Error Handling
+- Provide user-friendly error messages
+- Log errors appropriately
+- Implement fallback UI for failed states
+- Use error boundaries for component-level errors
+
+## Key Patterns
+- Custom hooks for reusable logic
+- Optimistic UI updates when appropriate
+- Immediate feedback for user actions
+- Handle edge cases and empty states
+- Ensure accessibility with proper ARIA labels
+
+## Project Structure
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── api/               # API routes
+│   ├── dashboard/         # Protected pages
+│   └── auth/              # Auth pages
+├── components/            # Reusable components
+│   ├── ui/               # shadcn/ui components
+│   ├── auth/             # Auth components
+│   └── forms/            # Form components
+├── lib/                  # Utilities and configs
+├── hooks/                # Custom hooks
+├── context/              # React contexts
+└── types/                # TypeScript types
+```
+
+## Environment Variables
+Always use environment variables for:
+- API keys
+- Database URLs
+- App URLs
+- Secrets
+
+## Caching Strategy
+Implement smart caching for AI responses:
+- Cache by query hash
+- Respect cache expiration
+- Allow manual cache invalidation
+- Implement user feedback for cached responses
+
+Remember: This is for non-coders using Cursor AI. Prioritize clarity, good error handling, and user experience. Always provide working, complete code examples.
